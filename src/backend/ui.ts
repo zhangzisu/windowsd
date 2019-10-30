@@ -11,5 +11,5 @@ export function uiMaximuze () {
 }
 
 export function uiClose () {
-  currentWindow.close()
+  currentWindow.hide()
 }

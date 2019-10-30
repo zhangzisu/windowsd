@@ -1,4 +1,4 @@
-import { app, protocol, BrowserWindow, Tray } from 'electron'
+import { app, protocol, BrowserWindow, Tray, Menu } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 import * as path from 'path'
 
@@ -33,7 +33,17 @@ function createWindow () {
 }
 
 function createTray () {
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'Show', click: () => { if (win !== null) win.show() } },
+    { label: 'Quit', click: () => { app.quit() } }
+  ])
   tray = new Tray(path.join(__static, 'favicon.ico'))
+  tray.setContextMenu(contextMenu)
+  tray.on('double-click', () => {
+    if (win !== null) {
+      win.show()
+    }
+  })
 }
 
 if (app.requestSingleInstanceLock()) {
