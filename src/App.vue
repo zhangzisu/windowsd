@@ -18,9 +18,32 @@
       </v-btn>
     </v-system-bar>
     <v-app-bar app>
-      <v-app-bar-nav-icon/>
+      <v-app-bar-nav-icon @click="nav = !nav"/>
     </v-app-bar>
+    <v-navigation-drawer v-model="nav" app>
+      <v-list>
+        <v-list-item to="/">
+          <v-list-item-action>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Home</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/settings">
+          <v-list-item-action>
+            <v-icon>mdi-settings</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Settings</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
     <v-content>
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
     </v-content>
   </v-app>
 </template>
@@ -32,6 +55,7 @@ import { uiMinimize, uiMaximuze, uiClose } from '@/backend/ui'
 
 @Component
 export default class App extends Vue {
+  nav = false
   minimize () {
     uiMinimize()
   }
