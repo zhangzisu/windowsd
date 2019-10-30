@@ -14,7 +14,8 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true
     },
-    frame: false
+    frame: false,
+    icon: path.join(__static, 'favicon.ico')
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
