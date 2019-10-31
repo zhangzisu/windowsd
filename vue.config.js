@@ -8,5 +8,10 @@ module.exports = {
         }
       ]
     }
+  },
+  pluginOptions: {
+    electronBuilder: {
+      externals: ['!@mdi/font', 'leveldown', 'levelup']
+    }
   }
 }

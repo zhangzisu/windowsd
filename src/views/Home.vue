@@ -4,7 +4,7 @@
       <v-row>
         <v-col cols="12">
           <v-card>
-            <v-card-title>状态</v-card-title>
+            <v-card-title>Status</v-card-title>
           </v-card>
         </v-col>
       </v-row>
