@@ -13,3 +13,7 @@ export function uiMaximuze () {
 export function uiClose () {
   currentWindow.hide()
 }
+
+export function uiOpenDevTools () {
+  currentWindow.webContents.openDevTools()
+}
