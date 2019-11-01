@@ -16,7 +16,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { uiOpenDevTools } from '../backend/ui'
+import { uiOpenDevTools } from '@/frontend/ui'
+import { rpcCall } from '@/frontend/rpc'
 
 @Component
 export default class Settings extends Vue {

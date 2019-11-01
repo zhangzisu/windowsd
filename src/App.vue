@@ -51,7 +51,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { uiMinimize, uiMaximuze, uiClose } from '@/backend/ui'
+import { uiMinimize, uiMaximuze, uiClose } from '@/frontend/ui'
 
 @Component
 export default class App extends Vue {

@@ -1,6 +1,7 @@
-import { app, protocol, BrowserWindow, Tray, Menu } from 'electron'
+import { app, protocol, BrowserWindow, Tray, Menu, ipcMain } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 import * as path from 'path'
+import { handleRpc } from './backend/rpc-server'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -81,6 +82,13 @@ if (app.requestSingleInstanceLock()) {
       })
     }
   }
+
+  ipcMain.on('zrpc', (event, asyncId: number, fName: string, args: any[]) => {
+    const channel = `zrpc-${asyncId}`
+    handleRpc(fName, args)
+      .catch((e: any) => event.reply(channel, e))
+      .then((v: any) => event.reply(channel, null, v))
+  })
 } else {
   app.quit()
 }
