@@ -1,11 +1,13 @@
 <template>
-  <v-row justify="center">
+  <v-row class="fill-height">
     <v-col cols="12" lg="3">
       <v-card>
         <v-card-title>Settings</v-card-title>
         <v-list>
           <v-list-item @click="openDevTools">
-            <v-list-item-title>Open Developer Tools</v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title>Open Developer Tools</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-card>
