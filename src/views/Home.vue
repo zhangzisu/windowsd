@@ -26,14 +26,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { rpcCall } from '../frontend/rpc'
 
 @Component
 export default class Home extends Vue {
-  services = [
-    { name: 'Service 1', status: 'Running' },
-    { name: 'Service 2', status: 'Failed' },
-    { name: 'Service 3', status: 'Loaded' }
-  ]
+  services: any[] = []
 
   getColorByStatus (status: string) {
     switch (status) {
@@ -42,6 +39,10 @@ export default class Home extends Vue {
       case 'Loaded': return 'primary'
       default: return ''
     }
+  }
+
+  async mounted () {
+    this.services = (await rpcCall(0, 'listServices', [])) as any[]
   }
 }
 </script>

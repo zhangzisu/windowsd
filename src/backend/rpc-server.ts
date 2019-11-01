@@ -1,6 +1,14 @@
+import { listService, startService, stopService } from './services'
+
 const rpcFunctions: { [K: string]: any } = {
   listServices: async () => {
-    return [1, 2, 3]
+    return listService()
+  },
+  startService: async (name: string) => {
+    startService(name)
+  },
+  stopService: async (name: string) => {
+    stopService(name)
   }
 }
 
