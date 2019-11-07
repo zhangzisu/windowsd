@@ -38,6 +38,14 @@
             <v-list-item-title>Settings</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item @click="exit">
+          <v-list-item-action>
+            <v-icon>mdi-exit-to-app</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Exit</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-content>
@@ -51,7 +59,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { uiMinimize, uiMaximuze, uiClose } from '@/frontend/ui'
+import { uiMinimize, uiMaximuze, uiClose, uiExit } from '@/frontend/ui'
 
 @Component
 export default class App extends Vue {
@@ -64,6 +72,9 @@ export default class App extends Vue {
   }
   close () {
     uiClose()
+  }
+  exit () {
+    uiExit()
   }
 }
 </script>

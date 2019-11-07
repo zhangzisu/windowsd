@@ -1,21 +1,31 @@
 import { listService, startService, stopService } from './services'
+import { isAutoStart, enableAutoStart, disableAutoStart } from './autostart'
 
 const rpcFunctions: { [K: string]: any } = {
   listServices: async () => {
     return listService()
   },
   startService: async (name: string) => {
-    startService(name)
+    return startService(name)
   },
   stopService: async (name: string) => {
-    stopService(name)
+    return stopService(name)
+  },
+  isAutoStart: async () => {
+    return isAutoStart()
+  },
+  enableAutoStart: async () => {
+    return enableAutoStart()
+  },
+  disableAutoStart: async () => {
+    return disableAutoStart()
   }
 }
 
 export async function handleRpc (fName: string, args: any[]) {
-  if (typeof rpcFunctions[fName] !== 'function') {
-    throw new Error('Bad function')
-  } else {
+  if (fName in rpcFunctions) {
     return rpcFunctions[fName](...args)
+  } else {
+    throw new Error('Bad function')
   }
 }

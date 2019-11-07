@@ -1,4 +1,5 @@
-import { remote } from 'electron'
+import { remote, shell } from 'electron'
+import * as path from 'path'
 
 const currentWindow = remote.getCurrentWindow()
 
@@ -16,4 +17,16 @@ export function uiClose () {
 
 export function uiOpenDevTools () {
   currentWindow.webContents.openDevTools()
+}
+
+export function uiOpenFolder (path: string) {
+  shell.openItem(path)
+}
+
+export function uiOpenServiceFolder () {
+  uiOpenFolder(path.join(remote.app.getPath('userData'), 'services'))
+}
+
+export function uiExit () {
+  remote.app.quit()
 }
