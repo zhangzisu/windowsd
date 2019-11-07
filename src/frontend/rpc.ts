@@ -8,10 +8,10 @@ export async function rpcCall (timeout: number, fName: string, args: any[]) {
   ipcRenderer.send('zrpc', asyncId, fName, args)
   return new Promise((resolve, reject) => {
     let timeoutId: NodeJS.Timeout
-    ipcRenderer.on(channel, (event, error: any, args: any[]) => {
+    ipcRenderer.on(channel, (event, error: string, args: any[]) => {
       timeoutId && clearTimeout(timeoutId)
       ipcRenderer.removeAllListeners(channel)
-      error ? reject(error) : resolve(args)
+      error ? reject(new Error(error)) : resolve(args)
     })
     if (timeout) {
       timeoutId = setTimeout(() => {

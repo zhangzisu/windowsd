@@ -85,7 +85,7 @@ if (app.requestSingleInstanceLock()) {
   ipcMain.on('zrpc', (event, asyncId: number, fName: string, args: any[]) => {
     const channel = `zrpc-${asyncId}`
     handleRpc(fName, args)
-      .catch((e: any) => event.reply(channel, e))
+      .catch((e: any) => event.reply(channel, e.message))
       .then((v: any) => event.reply(channel, null, v))
   })
 } else {

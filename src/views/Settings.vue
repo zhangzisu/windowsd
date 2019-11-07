@@ -1,6 +1,6 @@
 <template>
   <v-row class="fill-height">
-    <v-col cols="12" lg="3">
+    <v-col cols="12">
       <v-card>
         <v-card-title>Settings</v-card-title>
         <v-list>
