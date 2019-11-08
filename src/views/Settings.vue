@@ -49,10 +49,10 @@ export default class Settings extends Vue {
   async changeAutoStart () {
     if (this.autostart) {
       this.autostart = null
-      await rpcCall(0, 'enableAutoStart', [])
+      await rpcCall(0, 'disableAutoStart', [])
     } else {
       this.autostart = null
-      await rpcCall(0, 'disableAutoStart', [])
+      await rpcCall(0, 'enableAutoStart', [])
     }
     this.autostart = await rpcCall(0, 'isAutoStart', []) as boolean
   }
