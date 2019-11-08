@@ -29,6 +29,7 @@ install:
   - yarn
 
 build_script:
+  - yarn generate-icons
   - yarn build
 
 test: off

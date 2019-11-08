@@ -36,6 +36,9 @@ export default class Terminal extends Vue {
     this.pty.onData(input => {
       this.term.write(input)
     })
+    this.pty.onExit(({ exitCode, signal }) => {
+      this.term.writeln(`PTY exited with code ${exitCode} and signal ${signal}`)
+    })
   }
 
   beforeDestory () {
