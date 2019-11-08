@@ -21,6 +21,22 @@
       <v-app-bar-nav-icon @click="nav = !nav"/>
     </v-app-bar>
     <v-navigation-drawer v-model="nav" app>
+      <v-list-item>
+        <v-list-item-avatar>
+          <v-icon>mdi-incognito</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>
+            Guest
+          </v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-btn to="/account" icon>
+            <v-icon>mdi-circle-edit-outline</v-icon>
+          </v-btn>
+        </v-list-item-action>
+      </v-list-item>
+      <v-divider/>
       <v-list>
         <v-list-item to="/">
           <v-list-item-action>
@@ -30,20 +46,20 @@
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="/settings">
-          <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
         <v-list-item to="/terminal">
           <v-list-item-action>
             <v-icon>mdi-console-line</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Terminal</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/settings">
+          <v-list-item-action>
+            <v-icon>mdi-settings</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Settings</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item @click="exit">

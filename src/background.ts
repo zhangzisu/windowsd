@@ -1,5 +1,6 @@
 import { app, protocol, BrowserWindow, Tray, Menu, ipcMain } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
+import { autoUpdater } from 'electron-updater'
 import * as path from 'path'
 import { handleRpc } from './backend/rpc-server'
 
@@ -66,6 +67,7 @@ if (app.requestSingleInstanceLock()) {
     }
     createWindow()
     createTray()
+    autoUpdater.checkForUpdatesAndNotify()
   })
 
   if (isDevelopment) {
