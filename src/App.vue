@@ -38,6 +38,14 @@
             <v-list-item-title>Settings</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item to="/terminal">
+          <v-list-item-action>
+            <v-icon>mdi-console-line</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Terminal</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item @click="exit">
           <v-list-item-action>
             <v-icon>mdi-exit-to-app</v-icon>

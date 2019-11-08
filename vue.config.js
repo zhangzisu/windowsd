@@ -11,7 +11,7 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
-      externals: ['!@mdi/font', 'leveldown', 'levelup']
+      externals: ['!@mdi/font', 'leveldown', 'levelup', 'node-pty']
     }
   }
 }
