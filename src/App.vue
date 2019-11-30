@@ -7,14 +7,14 @@
       <v-spacer/>
       Windowsd
       <v-spacer/>
-      <v-btn text @click="minimize" style="-webkit-app-region: no-drag" small>
-        <v-icon right>mdi-minus</v-icon>
+      <v-btn text @click="minimize" style="-webkit-app-region: no-drag">
+        <v-icon class="no-margin">mdi-minus</v-icon>
       </v-btn>
-      <v-btn text @click="maximize" style="-webkit-app-region: no-drag" small>
-        <v-icon right>mdi-plus</v-icon>
+      <v-btn text @click="maximize" style="-webkit-app-region: no-drag">
+        <v-icon class="no-margin">mdi-plus</v-icon>
       </v-btn>
-      <v-btn text @click="close" style="-webkit-app-region: no-drag" color="error" small>
-        <v-icon right>mdi-close</v-icon>
+      <v-btn text @click="close" style="-webkit-app-region: no-drag" color="error">
+        <v-icon class="no-margin">mdi-close</v-icon>
       </v-btn>
     </v-system-bar>
     <v-app-bar app>
@@ -30,11 +30,6 @@
             Guest
           </v-list-item-title>
         </v-list-item-content>
-        <v-list-item-action>
-          <v-btn to="/account" icon>
-            <v-icon>mdi-circle-edit-outline</v-icon>
-          </v-btn>
-        </v-list-item-action>
       </v-list-item>
       <v-divider/>
       <v-list>
@@ -91,14 +86,23 @@ export default class App extends Vue {
   minimize () {
     uiMinimize()
   }
+
   maximize () {
     uiMaximuze()
   }
+
   close () {
     uiClose()
   }
+
   exit () {
     uiExit()
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.no-margin {
+  margin: 0 !important;
+}
+</style>

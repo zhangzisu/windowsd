@@ -40,12 +40,15 @@ export default class Settings extends Vue {
   async mounted () {
     this.autostart = await rpcCall(0, 'isAutoStart', []) as boolean
   }
+
   openDevTools () {
     uiOpenDevTools()
   }
+
   openServiceFolder () {
     uiOpenServiceFolder()
   }
+
   async changeAutoStart () {
     if (this.autostart) {
       this.autostart = null
