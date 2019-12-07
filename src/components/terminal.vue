@@ -1,14 +1,12 @@
 <template>
-  <v-row class="fill-height">
-    <v-col cols="12" class="fill-height">
-      <v-card>
-        <v-card-text>
-          <div ref="terminal">
-          </div>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-footer padless>
+    <v-row>
+      <v-col cols="12">
+        <div ref="terminal" class="terminal">
+        </div>
+      </v-col>
+    </v-row>
+  </v-footer>
 </template>
 
 <script lang="ts">
@@ -16,17 +14,29 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import 'xterm/css/xterm.css'
 import { Terminal as Xterm } from 'xterm'
-import * as pty from 'node-pty'
+import { FitAddon } from 'xterm-addon-fit'
+import { IPty, spawn } from 'node-pty'
 
 const shell = process.platform === 'win32' ? 'cmd.exe' : 'bash'
 
 @Component
 export default class Terminal extends Vue {
-  term = new Xterm()
-  pty = pty.spawn(shell, [], { cols: this.term.cols, rows: this.term.rows })
+  term: Xterm
+  fit: FitAddon
+  pty: IPty
+
+  constructor () {
+    super()
+    this.term = new Xterm({
+    })
+    this.fit = new FitAddon()
+    this.term.loadAddon(this.fit)
+    this.pty = spawn(shell, [], { cols: this.term.cols, rows: this.term.rows })
+  }
 
   mounted () {
-    this.term.open(this.$refs.terminal as any)
+    this.term.open(this.$refs.terminal as HTMLElement)
+    this.fit.fit()
     this.term.onResize(({ cols, rows }) => {
       this.pty.resize(cols, rows)
     })
@@ -47,3 +57,10 @@ export default class Terminal extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.terminal {
+  width: 100%;
+  height: 120px;
+}
+</style>
