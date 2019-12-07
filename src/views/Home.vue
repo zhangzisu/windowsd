@@ -30,6 +30,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import 'xterm/css/xterm.css'
 import { Terminal as Xterm } from 'xterm'
+import { FitAddon } from 'xterm-addon-fit'
 import { IPty, spawn } from 'node-pty'
 import { EOL } from 'os'
 import { exec } from 'child_process'
@@ -44,11 +45,15 @@ const execAsync = promisify(exec)
 @Component
 export default class Home extends Vue {
   term!: Xterm
+  fitter!: FitAddon
   pty!: IPty
   loading = false
   started = false
 
   mounted () {
+    window.addEventListener('resize', () => {
+      this.fitter && this.fitter.fit()
+    })
     this.start()
   }
 
@@ -73,6 +78,9 @@ export default class Home extends Vue {
 
   async start () {
     this.term = new Xterm()
+    this.fitter = new FitAddon()
+    this.term.loadAddon(this.fitter)
+
     this.term.open(this.$refs.terminal as any)
     this.term.writeln(c.blue('Checking nodejs...'))
     try {
