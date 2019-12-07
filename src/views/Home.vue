@@ -4,18 +4,17 @@
       <v-row>
         <v-col cols="12">
           <v-card>
-            <v-card-title>Status</v-card-title>
-            <v-list>
-              <v-list-item v-for="(service, i) in services" :key="i" @click="changeState(i)" :disabled="disabled[i]">
-                <v-list-item-icon>
-                  <v-icon :color="getColorByStatus(service.status)">mdi-settings</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>{{ service.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ service.status }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
+            <v-card-title>
+              Terminal
+              <v-spacer/>
+              <v-btn icon :loading="loading" @click="restart">
+                <v-icon>mdi-refresh</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-card-text>
+              <div ref="terminal">
+              </div>
+            </v-card-text>
           </v-card>
         </v-col>
       </v-row>
@@ -26,56 +25,117 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { rpcCall } from '../frontend/rpc'
+import 'xterm/css/xterm.css'
+import { Terminal as Xterm } from 'xterm'
+import { IPty, spawn } from 'node-pty'
+import { EOL } from 'os'
+import { exec } from 'child_process'
+import { remote } from 'electron'
+import { promisify } from 'util'
+import { Instance } from 'chalk'
+
+const c = new Instance({ level: 3 })
+const which = remote.require('which')
+const execAsync = promisify(exec)
 
 @Component
 export default class Home extends Vue {
-  services: any[] = []
-  timeout: NodeJS.Timeout | null = null
-  disabled: boolean[] = []
-
-  getColorByStatus (status: string) {
-    switch (status) {
-      case 'Running':
-        return 'success'
-      case 'Failed':
-        return 'error'
-      case 'Loaded':
-        return 'primary'
-      default:
-        return ''
-    }
-  }
+  term!: Xterm
+  pty!: IPty
+  loading = false
 
   mounted () {
-    this.timeout = setInterval(() => this.update(), 1000)
-    this.update()
+    this.start()
   }
 
-  beforeDestroy () {
-    if (this.timeout) {
-      clearInterval(this.timeout)
-    }
+  async restart () {
+    this.loading = true
+    this.reset()
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    this.start()
+    this.loading = false
   }
 
-  async changeState (i: number) {
-    const service = this.services[i]
-    this.$set(this.disabled, i, true)
+  async start () {
+    this.term = new Xterm()
+    this.term.open(this.$refs.terminal as any)
+    this.term.writeln(c.blue('Checking nodejs...'))
     try {
-      if (service.status === 'Running') {
-        await rpcCall(0, 'stopService', [service.name])
-      } else {
-        await rpcCall(0, 'startService', [service.name])
-      }
+      this.term.writeln(`node -> ${c.underline(which.sync('node'))}`)
     } catch (e) {
-      //
-    } finally {
-      this.$set(this.disabled, i, false)
+      this.term.writeln(c.red('NodeJS not found! Please install!'))
+      return
+    }
+    this.term.writeln(c.blue('Checking npm...'))
+    try {
+      this.term.writeln(`npm -> ${which.sync('npm')}`)
+    } catch (e) {
+      this.term.writeln(c.red('npm not found! Please install!'))
+      return
+    }
+    this.term.writeln(c.blue('Checking wdc...'))
+    let wdc = ''
+    try {
+      wdc = which.sync('wdc')
+      this.term.writeln(`wdc -> ${wdc}`)
+    } catch (e) {
+      this.term.writeln(c.yellow('wdc not found!'))
+      if (!await this.installWdc()) {
+        this.term.writeln(c.red('wdp install failed!'))
+        return
+      }
+    }
+    const device = localStorage.DeviceID
+    if (!device) {
+      this.term.writeln(c.red('Device not set!'))
+      return
+    }
+    this.term.writeln(c.green('Starting Windowsd™ Client'))
+    const args = ['--device', device]
+    const server = localStorage.Server
+    if (server) {
+      args.push('--server', server)
+    }
+    const listen = localStorage.Listen
+    if (listen) {
+      args.push('--api', listen)
+    }
+    this.pty = spawn(wdc, args, { cols: this.term.cols, rows: this.term.rows })
+    this.term.onResize(({ cols, rows }) => {
+      this.pty.resize(cols, rows)
+    })
+    // this.term.onData(input => {
+    //   this.pty.write(input)
+    // })
+    this.pty.onData(input => {
+      this.term.write(input)
+    })
+    this.pty.onExit(({ exitCode, signal }) => {
+      this.term.writeln(`Windowsd™ exited with code ${exitCode} and signal ${signal}`)
+    })
+  }
+
+  async installWdc () {
+    try {
+      console.log('Installing @windowsd/client')
+      const { stdout, stderr } = await execAsync('npm i -g @windowsd/client')
+      // Normalize trilling char
+      this.term.writeln(stdout.replace(new RegExp(EOL, 'g'), '\n'))
+      this.term.writeln(stderr.replace(new RegExp(EOL, 'g'), '\n'))
+      return true
+    } catch (e) {
+      this.term.writeln(e.toString())
+      return false
     }
   }
 
-  async update () {
-    this.services = (await rpcCall(0, 'listServices', [])) as any[]
+  reset () {
+    this.term && this.term.dispose()
+    this.pty && this.pty.kill()
+  }
+
+  beforeDestory () {
+    this.reset()
   }
 }
 </script>

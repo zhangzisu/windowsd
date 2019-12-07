@@ -41,14 +41,6 @@
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item to="/terminal">
-          <v-list-item-action>
-            <v-icon>mdi-console-line</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Terminal</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
         <v-list-item to="/settings">
           <v-list-item-action>
             <v-icon>mdi-settings</v-icon>
@@ -69,10 +61,11 @@
     </v-navigation-drawer>
     <v-content>
       <v-container class="fill-height">
-        <router-view></router-view>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </v-container>
     </v-content>
-    <terminal/>
   </v-app>
 </template>
 
@@ -80,13 +73,8 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { uiMinimize, uiMaximuze, uiClose, uiExit } from '@/frontend/ui'
-import Terminal from '@/components/terminal.vue'
 
-@Component({
-  components: {
-    Terminal
-  }
-})
+@Component
 export default class App extends Vue {
   nav = false
   minimize () {
