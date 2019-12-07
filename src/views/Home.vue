@@ -7,6 +7,9 @@
             <v-card-title>
               Terminal
               <v-spacer/>
+              <v-btn icon :disabled="loading" @click="switcher">
+                <v-icon v-html="started ? 'mdi-cancel' : 'mdi-play'"></v-icon>
+              </v-btn>
               <v-btn icon :loading="loading" @click="restart">
                 <v-icon>mdi-refresh</v-icon>
               </v-btn>
@@ -43,16 +46,28 @@ export default class Home extends Vue {
   term!: Xterm
   pty!: IPty
   loading = false
+  started = false
 
   mounted () {
     this.start()
+  }
+
+  async switcher () {
+    this.loading = true
+    if (this.started) {
+      this.pty && this.pty.kill()
+    } else {
+      this.reset()
+      await this.start()
+    }
+    this.loading = false
   }
 
   async restart () {
     this.loading = true
     this.reset()
     await new Promise(resolve => setTimeout(resolve, 1000))
-    this.start()
+    await this.start()
     this.loading = false
   }
 
@@ -101,6 +116,7 @@ export default class Home extends Vue {
       args.push('--api', listen)
     }
     this.pty = spawn(wdc, args, { cols: this.term.cols, rows: this.term.rows })
+    this.started = true
     this.term.onResize(({ cols, rows }) => {
       this.pty.resize(cols, rows)
     })
@@ -112,6 +128,7 @@ export default class Home extends Vue {
     })
     this.pty.onExit(({ exitCode, signal }) => {
       this.term.writeln(`Windowsd™ exited with code ${exitCode} and signal ${signal}`)
+      this.started = false
     })
   }
 
@@ -132,6 +149,7 @@ export default class Home extends Vue {
   reset () {
     this.term && this.term.dispose()
     this.pty && this.pty.kill()
+    this.started = false
   }
 
   beforeDestory () {
