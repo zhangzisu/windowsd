@@ -142,7 +142,7 @@ export default class Home extends Vue {
 
   async installWdc () {
     try {
-      console.log('Installing @windowsd/client')
+      this.term.writeln('Installing @windowsd/client')
       const { stdout, stderr } = await execAsync('npm i -g @windowsd/client')
       // Normalize trilling char
       this.term.writeln(stdout.replace(new RegExp(EOL, 'g'), '\n'))
