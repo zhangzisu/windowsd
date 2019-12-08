@@ -7,10 +7,10 @@
             <v-card-title>
               Terminal
               <v-spacer/>
-              <v-btn icon :disabled="loading" @click="switcher">
+              <v-btn icon :disabled="loading || preparing" @click="switcher">
                 <v-icon v-html="started ? 'mdi-cancel' : 'mdi-play'"></v-icon>
               </v-btn>
-              <v-btn icon :loading="loading" @click="restart">
+              <v-btn icon :loading="loading || preparing" @click="restart">
                 <v-icon>mdi-refresh</v-icon>
               </v-btn>
             </v-card-title>
@@ -49,6 +49,7 @@ export default class Home extends Vue {
   pty!: IPty
   loading = false
   started = false
+  preparing = false
 
   mounted () {
     window.addEventListener('resize', () => {
@@ -82,32 +83,10 @@ export default class Home extends Vue {
     this.term.loadAddon(this.fitter)
 
     this.term.open(this.$refs.terminal as any)
-    this.term.writeln(c.blue('Checking nodejs...'))
-    try {
-      this.term.writeln(`node -> ${c.underline(which.sync('node'))}`)
-    } catch (e) {
-      this.term.writeln(c.red('NodeJS not found! Please install!'))
-      return
-    }
-    this.term.writeln(c.blue('Checking npm...'))
-    try {
-      this.term.writeln(`npm -> ${which.sync('npm')}`)
-    } catch (e) {
-      this.term.writeln(c.red('npm not found! Please install!'))
-      return
-    }
-    this.term.writeln(c.blue('Checking wdc...'))
-    let wdc = ''
-    try {
-      wdc = which.sync('wdc')
-      this.term.writeln(`wdc -> ${wdc}`)
-    } catch (e) {
-      this.term.writeln(c.yellow('wdc not found!'))
-      if (!await this.installWdc()) {
-        this.term.writeln(c.red('wdp install failed!'))
-        return
-      }
-    }
+    this.preparing = true
+    const wdc = await this.prepare()
+    this.preparing = false
+    if (!wdc) return
     const device = localStorage.DeviceID
     if (!device) {
       this.term.writeln(c.red('Device not set!'))
@@ -138,6 +117,33 @@ export default class Home extends Vue {
       this.term.writeln(`Windowsd™ exited with code ${exitCode} and signal ${signal}`)
       this.started = false
     })
+  }
+
+  async prepare () {
+    this.term.writeln(c.blue('Checking nodejs...'))
+    try {
+      this.term.writeln(`node -> ${c.underline(which.sync('node'))}`)
+    } catch (e) {
+      this.term.writeln(c.red('NodeJS not found! Please install!'))
+      return
+    }
+    this.term.writeln(c.blue('Checking npm...'))
+    try {
+      this.term.writeln(`npm -> ${which.sync('npm')}`)
+    } catch (e) {
+      this.term.writeln(c.red('npm not found! Please install!'))
+      return
+    }
+    this.term.writeln(c.blue('Updating wdc...'))
+    await this.installWdc()
+    let wdc = ''
+    try {
+      wdc = which.sync('wdc')
+      this.term.writeln(`wdc -> ${wdc}`)
+    } catch (e) {
+      this.term.writeln(c.yellow('wdc not found!'))
+    }
+    return wdc
   }
 
   async installWdc () {
