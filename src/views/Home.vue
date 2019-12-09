@@ -46,6 +46,7 @@ const execAsync = promisify(exec)
 export default class Home extends Vue {
   term!: Xterm
   fitter!: FitAddon
+  fitDue?: NodeJS.Timeout
   pty!: IPty
   loading = false
   started = false
@@ -56,6 +57,11 @@ export default class Home extends Vue {
       this.fitter && this.fitter.fit()
     })
     this.start()
+  }
+
+  fit () {
+    this.fitDue && clearTimeout(this.fitDue)
+    this.fitDue = setTimeout(this.fitter.fit.bind(this.fitter), 100)
   }
 
   async switcher () {
@@ -134,14 +140,17 @@ export default class Home extends Vue {
       this.term.writeln(c.red('npm not found! Please install!'))
       return
     }
-    this.term.writeln(c.blue('Updating wdc...'))
-    await this.installWdc()
+    this.term.writeln(c.blue('Checking wdc...'))
     let wdc = ''
     try {
       wdc = which.sync('wdc')
       this.term.writeln(`wdc -> ${wdc}`)
     } catch (e) {
       this.term.writeln(c.yellow('wdc not found!'))
+      if (!await this.installWdc()) {
+        this.term.writeln(c.red('wdp install failed!'))
+        return
+      }
     }
     return wdc
   }
